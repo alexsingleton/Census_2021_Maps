@@ -1,0 +1,343 @@
+library(tidyverse)
+library(sf)
+library(magrittr)
+library(tmap)
+library(arrow)
+
+# Download the Output Areas
+url<- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Output_Areas_Dec_2021_Boundaries_Generalised_Clipped_EW_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=OA21CD&outSR=4326&f=json"
+boundary <- st_read(url)
+
+# Download the LAD Boundaries
+url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_December_2021_UK_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=LAD21CD,LAD21NM,LAD21NMW&outSR=4326&f=json"
+boundary_lad <- st_read(url)
+
+# Download the OA to LAD lookup
+OA_LAD <- read_csv("https://www.arcgis.com/sharing/rest/content/items/792f7ab3a99d403ca02cc9ca1cf8af02/data")
+
+# Downlaod LAD to Region - then select out unique records (original is an MSOA table)
+LAD_RGN <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/MSOA21_BUA22_LAD22_RGN22_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=LAD22CD,RGN22CD,RGN22NM&returnGeometry=false&outSR=4326&f=json")
+LAD_RGN %<>%
+  distinct()
+
+# Remove unwanted columns
+OA_LAD %<>%
+  select(oa21cd,lad22cd)
+
+#Append LAD / Region to OA Boundaries
+boundary %<>%
+  left_join(OA_LAD,by = c("OA21CD" = "oa21cd")) 
+boundary %<>%
+  left_join(LAD_RGN,by = c("lad22cd" = "LAD22CD")) 
+
+# Get a list of LAD
+
+LAD_list <- boundary %>% 
+  select(lad22cd) %>%
+  st_drop_geometry() %>%
+  pull() %>%
+  unique()
+
+########################################################
+# Pull in census 2021 data, calculate PCT
+#########################################################
+
+# Get Census Table Lists
+
+census_tables <- read_csv("https://github.com/alexsingleton/Census_2021_Output_Areas/raw/main/Table_Metadata.csv",show_col_types = FALSE)
+
+# Read Census Table
+C_Table_Name_List <- census_tables %>% select(Table_ID) %>% unique() %>% pull()
+
+for (ct_tmpID in C_Table_Name_List) {
+  
+  # Download Census Table
+  CT_tmp <- read_csv(paste0("https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/",ct_tmpID,".csv?raw=true"),show_col_types = FALSE)
+  
+  # Calculate Percentages
+  CT_tmp %<>%
+   # mutate_at(vars(-1:-2),  PCT = ~(./sym(paste0(ct_tmpID,"0001"))))
+    
+  mutate_at(vars(-1:-2), list(PCT = ~(. / !!sym(paste0(ct_tmpID,"0001")))))
+ 
+ assign(ct_tmpID,CT_tmp)
+ rm(ct_tmpID,CT_tmp)
+   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+  # Get Table Metadata and create a list of variables to map
+  CT_metadata <- census_tables %>%
+    filter(Table_ID == ct_tmp)
+  
+  
+  
+  maps_to_make <- CT_metadata %>%
+    slice(-1) %>%
+    select(new_names) %>%
+    pull()
+  
+  # Appends the census table to the geometry
+  CT_tmp_SF <- boundary %>%
+    left_join(CT_tmp, by = c("OA21CD" = "OA"))
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+for (tmp_map in maps_to_make){
+
+ 
+  
+  tmap_mode("view")
+  
+  CT_tmp_SF %>%
+    filter(lad22cd == LAD_list[i]) %>%
+  tm_shape() +
+    tm_basemap(leaflet::providers$CartoDB.Positron) +
+    tm_fill(paste0(tmp_map,"_PCT"), 
+            popup.vars=c(
+              "OA: " = "OA21CD",
+              "%: " = paste0(tmp_map,"_PCT"), 
+              "N: " = tmp_map),
+            id = "",
+            group = NULL,
+            alpha = 0.8,
+            n = 5,
+            palette = viridisLite::viridis(5),
+            
+            # title of the legend
+            title = "ts0110002_PCT",
+            legend.reverse = TRUE) + 
+    tm_borders(col = "#D3D3D3", lwd = 0.7, group = NULL)
+
+  
+  
+}
+  
+  
+  
+  
+  ####################### Create Website ######################
+  
+  
+  # Setup Blog Skeleton
+  system("quarto create-project website --type website:blog")
+  
+  #remove unwanted files from the template
+  unlink("website/posts/*", recursive = TRUE,force=TRUE)
+  unlink("website/about.qmd")
+  unlink("website/profile.jpg")
+  unlink("website/_quarto.yml")
+  unlink("website/index.qmd")
+  unlink("docs",recursive = TRUE,force=TRUE)
+  
+  
+  
+  # Create Yaml / menu
+  
+  fileConn <- "./website/_quarto.yml"
+  cat('project:',file=fileConn,append=TRUE,sep="\n")
+  cat('  type: website',file=fileConn,append=TRUE,sep="\n")
+  cat('  output-dir: ../docs',file=fileConn,append=TRUE,sep="\n\n")
+  cat('website:',file=fileConn,append=TRUE,sep="\n")
+  cat('  title: "England and Wales Census Maps 2021"',file=fileConn,append=TRUE,sep="\n")
+  cat('  navbar:',file=fileConn,append=TRUE,sep="\n")
+  cat('      background: light',file=fileConn,append=TRUE,sep="\n")
+  cat('      search: true',file=fileConn,append=TRUE,sep="\n")
+  cat('      left:',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "NE"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000001.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "NW"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000002.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "Yorkshire and The Humber"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000003.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "EM"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000004.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "WM"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000005.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "EE"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000006.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "London"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000007.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "SE"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000008.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "SW"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/E12000009.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('       - text: "Wales"',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/wales.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('format:',file=fileConn,append=TRUE,sep="\n")
+  cat('  html:',file=fileConn,append=TRUE,sep="\n")
+  cat('    theme: litera',file=fileConn,append=TRUE,sep="\n")
+  cat('    css: styles.css',file=fileConn,append=TRUE,sep="\n")
+  
+  
+  
+  #Create new index.qmd
+  
+  fileConn <- paste0("./website/index.qmd")
+  cat('---',file=fileConn,append=TRUE,sep="\n")
+  cat('title: "England and Wales Census Maps 2021"',file=fileConn,append=TRUE,sep="\n")
+  cat('page-layout: full',file=fileConn,append=TRUE,sep="\n")
+  cat('title-block-banner: false',file=fileConn,append=TRUE,sep="\n")
+  cat('listing:',file=fileConn,append=TRUE,sep="\n")
+  cat('  contents:',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000001',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000002',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000003',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000004',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000005',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000006',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000007',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000008',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/E12000009',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/wales',file=fileConn,append=TRUE,sep="\n")
+  cat('filter-ui: [title]',file=fileConn,append=TRUE,sep="\n")
+  cat('sort-ui: false',file=fileConn,append=TRUE,sep="\n")
+  cat('categories: false',file=fileConn,append=TRUE,sep="\n")
+  cat('---',file=fileConn,append=TRUE,sep="\n")
+  
+############################################################
+# Setup files and directories to create the maps
+############################################################  
+  
+    
+  # Create directory structure
+  
+  for (i in 1:nrow(LAD_RGN)) {
+    
+    dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/"),recursive=TRUE)
+    
+  }
+  
+  
+  #- Create OA files for each LAD
+  
+  for (lad in LAD_list) {
+    
+    tmp <- boundary %>%
+      filter(lad22cd == lad)
+    
+    rgn <- tmp %>% st_drop_geometry() %>% select(RGN22CD) %>% distinct() %>% pull()
+    
+    tmp %<>%
+      select(OA21CD)
+    
+    st_write(tmp, paste0("./website/posts/",rgn,"/",lad,"/",lad,".geojson")) 
+    
+    rm(tmp,rgn)
+    
+  }
+  
+
+  
+  #- Create Census tables for each LAD
+  
+  for (CT in C_Table_Name_List) { # loop through census tables
+    
+    tmp_CTAB <- get(CT) # Get the census table
+    tmp_CTAB %<>%
+      left_join(OA_LAD,by = c("OA" = "oa21cd")) # Append the LAD codes
+    tmp_CTAB %<>%
+      left_join(LAD_RGN,by = c("lad22cd" = "LAD22CD"))  # Append the Region codes
+    
+  
+    # This check is needed to account for tables that are only produced for wales
+    
+    wales_only_tables <- c("ts032","ts033","ts034","ts035","ts036")
+    
+        if (CT %in% wales_only_tables) {
+          
+          LAD_list_Wales_check <-  grep("^W", LAD_list, value = TRUE)
+          
+        } else {
+          
+          LAD_list_Wales_check <- LAD_list
+            
+        }
+    
+    
+        for (lad in LAD_list_Wales_check) { # loop through each LAD
+          
+          # Cut the census table down for the LAD
+          tmp_CTAB_LAD <- tmp_CTAB %>%
+                filter(lad22cd == lad) 
+          
+          # Get the region
+          rgn <- tmp_CTAB_LAD %>% st_drop_geometry() %>% select(RGN22CD) %>% distinct() %>% pull()
+          
+          # Remove the lookups
+          tmp_CTAB_LAD %<>%
+            select(-lad22cd,-RGN22CD,-RGN22NM)
+          
+          # Write CSV
+          write_csv(tmp_CTAB_LAD, paste0("./website/posts/",rgn,"/",lad,"/",lad,"_",CT,".csv")) 
+          
+         rm(tmp_CTAB_LAD,rgn,lad)
+          
+        }
+  
+    rm(tmp_CTAB)
+  }
+  
+  
+  
+  
+  
+  
+  
+  # Setup the listing page for each Region
+  
+  
+  RG <- LAD_RGN %>% select(RGN22CD) %>% pull() %>% unique()
+  RG_N <- LAD_RGN %>% select(RGN22NM) %>% pull() %>% unique()
+  
+  
+  for (i in 1:length(RG)) {
+    
+    fileConn <- paste0("./website/posts/",RG[i],".qmd")
+    cat('---',file=fileConn,append=TRUE,sep="\n")
+    cat(paste0('title: "',RG_N[i],'"'),file=fileConn,append=TRUE,sep="\n")
+    cat('listing:',file=fileConn,append=TRUE,sep="\n")
+    cat(paste0("  contents: ",RG[i]),file=fileConn,append=TRUE,sep="\n")
+    cat('  type: grid',file=fileConn,append=TRUE,sep="\n")
+    cat('  categories: cloud',file=fileConn,append=TRUE,sep="\n")
+    cat('  fields: [image,title]',file=fileConn,append=TRUE,sep="\n")
+    cat('  sort-ui: false',file=fileConn,append=TRUE,sep="\n")
+    cat('  filter-ui: [title]',file=fileConn,append=TRUE,sep="\n")
+    cat('page-layout: full',file=fileConn,append=TRUE,sep="\n")
+    cat('title-block-banner: false',file=fileConn,append=TRUE,sep="\n")
+    cat('---',file=fileConn,append=TRUE,sep="\n")
+  }
+  
+  
+  
+  
+
+
+
