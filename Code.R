@@ -11,6 +11,7 @@ boundary <- st_read(url)
 # Download the LAD Boundaries
 url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_December_2021_UK_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=LAD21CD,LAD21NM,LAD21NMW&outSR=4326&f=json"
 boundary_lad <- st_read(url)
+st_write(boundary_lad,"boundary_lad.gpkg")
 
 # Download the OA to LAD lookup
 OA_LAD <- read_csv("https://www.arcgis.com/sharing/rest/content/items/792f7ab3a99d403ca02cc9ca1cf8af02/data")
@@ -46,8 +47,12 @@ LAD_list <- boundary %>%
 
 census_tables <- read_csv("https://github.com/alexsingleton/Census_2021_Output_Areas/raw/main/Table_Metadata.csv",show_col_types = FALSE)
 
-# Read Census Table
+write_csv(census_tables,"Census_Metadata.csv")
+
+
+# Read Census Table (Remove ts041 - number of households,ts006 - density)
 C_Table_Name_List <- census_tables %>% select(Table_ID) %>% unique() %>% pull()
+C_Table_Name_List %<>% setdiff(c("ts041","ts006"))
 
 for (ct_tmpID in C_Table_Name_List) {
   
@@ -58,7 +63,7 @@ for (ct_tmpID in C_Table_Name_List) {
   CT_tmp %<>%
    # mutate_at(vars(-1:-2),  PCT = ~(./sym(paste0(ct_tmpID,"0001"))))
     
-  mutate_at(vars(-1:-2), list(PCT = ~(. / !!sym(paste0(ct_tmpID,"0001")))))
+  mutate_at(vars(-1:-2), list(PCT = ~(. / !!sym(paste0(ct_tmpID,"0001"))*100)))
  
  assign(ct_tmpID,CT_tmp)
  rm(ct_tmpID,CT_tmp)
@@ -80,25 +85,8 @@ for (ct_tmpID in C_Table_Name_List) {
 
 
    
-  # Get Table Metadata and create a list of variables to map
-  CT_metadata <- census_tables %>%
-    filter(Table_ID == ct_tmp)
+
   
-  
-  
-  maps_to_make <- CT_metadata %>%
-    slice(-1) %>%
-    select(new_names) %>%
-    pull()
-  
-  # Appends the census table to the geometry
-  CT_tmp_SF <- boundary %>%
-    left_join(CT_tmp, by = c("OA21CD" = "OA"))
-  
-  
-  
-  
-}
 
 
 
@@ -107,39 +95,6 @@ for (ct_tmpID in C_Table_Name_List) {
 
 
 
-
-
-
-for (tmp_map in maps_to_make){
-
- 
-  
-  tmap_mode("view")
-  
-  CT_tmp_SF %>%
-    filter(lad22cd == LAD_list[i]) %>%
-  tm_shape() +
-    tm_basemap(leaflet::providers$CartoDB.Positron) +
-    tm_fill(paste0(tmp_map,"_PCT"), 
-            popup.vars=c(
-              "OA: " = "OA21CD",
-              "%: " = paste0(tmp_map,"_PCT"), 
-              "N: " = tmp_map),
-            id = "",
-            group = NULL,
-            alpha = 0.8,
-            n = 5,
-            palette = viridisLite::viridis(5),
-            
-            # title of the legend
-            title = "ts0110002_PCT",
-            legend.reverse = TRUE) + 
-    tm_borders(col = "#D3D3D3", lwd = 0.7, group = NULL)
-
-  
-  
-}
-  
   
   
   
@@ -190,7 +145,7 @@ for (tmp_map in maps_to_make){
   cat('       - text: "SW"',file=fileConn,append=TRUE,sep="\n")
   cat('         file: posts/E12000009.qmd',file=fileConn,append=TRUE,sep="\n")
   cat('       - text: "Wales"',file=fileConn,append=TRUE,sep="\n")
-  cat('         file: posts/wales.qmd',file=fileConn,append=TRUE,sep="\n")
+  cat('         file: posts/W92000004.qmd',file=fileConn,append=TRUE,sep="\n")
   cat('format:',file=fileConn,append=TRUE,sep="\n")
   cat('  html:',file=fileConn,append=TRUE,sep="\n")
   cat('    theme: litera',file=fileConn,append=TRUE,sep="\n")
@@ -206,6 +161,7 @@ for (tmp_map in maps_to_make){
   cat('page-layout: full',file=fileConn,append=TRUE,sep="\n")
   cat('title-block-banner: false',file=fileConn,append=TRUE,sep="\n")
   cat('listing:',file=fileConn,append=TRUE,sep="\n")
+  cat('  id: main-listing',file=fileConn,append=TRUE,sep="\n")
   cat('  contents:',file=fileConn,append=TRUE,sep="\n")
   cat('   - posts/E12000001',file=fileConn,append=TRUE,sep="\n")
   cat('   - posts/E12000002',file=fileConn,append=TRUE,sep="\n")
@@ -216,11 +172,17 @@ for (tmp_map in maps_to_make){
   cat('   - posts/E12000007',file=fileConn,append=TRUE,sep="\n")
   cat('   - posts/E12000008',file=fileConn,append=TRUE,sep="\n")
   cat('   - posts/E12000009',file=fileConn,append=TRUE,sep="\n")
-  cat('   - posts/wales',file=fileConn,append=TRUE,sep="\n")
+  cat('   - posts/W92000004',file=fileConn,append=TRUE,sep="\n")
+  cat('  type: table',file=fileConn,append=TRUE,sep="\n")
+  cat('  fields: [image,title]',file=fileConn,append=TRUE,sep="\n")
   cat('filter-ui: [title]',file=fileConn,append=TRUE,sep="\n")
-  cat('sort-ui: false',file=fileConn,append=TRUE,sep="\n")
-  cat('categories: false',file=fileConn,append=TRUE,sep="\n")
+  cat('sort-ui: true',file=fileConn,append=TRUE,sep="\n")
+  cat('categories: true',file=fileConn,append=TRUE,sep="\n")
   cat('---',file=fileConn,append=TRUE,sep="\n")
+  
+  system(paste("cat","./website/index.qmd"," ./template/home_template.qmd","> ", "./website/index.qmd"))
+  
+  
   
 ############################################################
 # Setup files and directories to create the maps
@@ -232,6 +194,7 @@ for (tmp_map in maps_to_make){
   for (i in 1:nrow(LAD_RGN)) {
     
     dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/"),recursive=TRUE)
+    dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/maps/"),recursive=TRUE)
     
   }
   
@@ -239,6 +202,7 @@ for (tmp_map in maps_to_make){
   #- Create OA files for each LAD
   
   for (lad in LAD_list) {
+
     
     tmp <- boundary %>%
       filter(lad22cd == lad)
@@ -248,7 +212,7 @@ for (tmp_map in maps_to_make){
     tmp %<>%
       select(OA21CD)
     
-    st_write(tmp, paste0("./website/posts/",rgn,"/",lad,"/",lad,".geojson")) 
+    write_sf(tmp, paste0("./website/posts/",rgn,"/",lad,"/",lad,".gpkg")) 
     
     rm(tmp,rgn)
     
@@ -326,7 +290,6 @@ for (tmp_map in maps_to_make){
     cat('listing:',file=fileConn,append=TRUE,sep="\n")
     cat(paste0("  contents: ",RG[i]),file=fileConn,append=TRUE,sep="\n")
     cat('  type: grid',file=fileConn,append=TRUE,sep="\n")
-    cat('  categories: cloud',file=fileConn,append=TRUE,sep="\n")
     cat('  fields: [image,title]',file=fileConn,append=TRUE,sep="\n")
     cat('  sort-ui: false',file=fileConn,append=TRUE,sep="\n")
     cat('  filter-ui: [title]',file=fileConn,append=TRUE,sep="\n")
@@ -337,7 +300,44 @@ for (tmp_map in maps_to_make){
   
   
   
+ # Generate the QML to build the maps
+    
+    
+    for (i in 1:nrow(LAD_RGN)) {
+      
+      lad_name <- boundary_lad %>% 
+        st_drop_geometry() %>% 
+        filter(LAD21CD == LAD_RGN[i,"LAD22CD"]) %>%
+        select(LAD21NM) %>%
+        pull()
+      
+      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/index.qmd"))
+      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd"))
+      
+      
+      # Create tmp YAML
+      
+      fileConn <- paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd")
+      cat('---',file=fileConn,append=TRUE,sep="\n")
+      cat(paste0('title: "',lad_name,'"'),file=fileConn,append=TRUE,sep="\n")
+      cat(paste0("categories: [",LAD_RGN[i,"LAD22CD"],"]"),file=fileConn,append=TRUE,sep="\n")
+      cat('image: "map.png"',file=fileConn,append=TRUE,sep="\n")
+      cat('---',file=fileConn,append=TRUE,sep="\n")
+      
+      rm(lad_name)
+      
+      
+      # Append YAML to template in the blog folder
+      system(paste("cat",fileConn," ./template/index.qmd","> ", paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/index.qmd")))
+      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd"))
+      
+      
+    } 
+    
   
-
-
-
+  # Render Website
+  
+  system("quarto render website")
+  
+    
+    
