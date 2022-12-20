@@ -1,3 +1,8 @@
+########################################################
+# Setup and download data
+#########################################################
+
+
 library(tidyverse)
 library(sf)
 library(magrittr)
@@ -46,7 +51,6 @@ LAD_list <- boundary %>%
 # Get Census Table Lists
 
 census_tables <- read_csv("https://github.com/alexsingleton/Census_2021_Output_Areas/raw/main/Table_Metadata.csv",show_col_types = FALSE)
-
 write_csv(census_tables,"Census_Metadata.csv")
 
 
@@ -69,25 +73,6 @@ for (ct_tmpID in C_Table_Name_List) {
  rm(ct_tmpID,CT_tmp)
    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   
-
-  
-
 
 
 
@@ -155,13 +140,14 @@ for (ct_tmpID in C_Table_Name_List) {
   
   #Create new index.qmd
   
-  fileConn <- paste0("./website/index.qmd")
+  fileConn <- paste0("./website/index_h.txt")
   cat('---',file=fileConn,append=TRUE,sep="\n")
-  cat('title: "England and Wales Census Maps 2021"',file=fileConn,append=TRUE,sep="\n")
   cat('page-layout: full',file=fileConn,append=TRUE,sep="\n")
   cat('title-block-banner: false',file=fileConn,append=TRUE,sep="\n")
   cat('listing:',file=fileConn,append=TRUE,sep="\n")
   cat('  id: main-listing',file=fileConn,append=TRUE,sep="\n")
+  cat('  filter-ui: [title]',file=fileConn,append=TRUE,sep="\n")
+  cat('  sort-ui: false',file=fileConn,append=TRUE,sep="\n")
   cat('  contents:',file=fileConn,append=TRUE,sep="\n")
   cat('   - posts/E12000001',file=fileConn,append=TRUE,sep="\n")
   cat('   - posts/E12000002',file=fileConn,append=TRUE,sep="\n")
@@ -175,19 +161,19 @@ for (ct_tmpID in C_Table_Name_List) {
   cat('   - posts/W92000004',file=fileConn,append=TRUE,sep="\n")
   cat('  type: table',file=fileConn,append=TRUE,sep="\n")
   cat('  fields: [image,title]',file=fileConn,append=TRUE,sep="\n")
-  cat('filter-ui: [title]',file=fileConn,append=TRUE,sep="\n")
-  cat('sort-ui: true',file=fileConn,append=TRUE,sep="\n")
-  cat('categories: true',file=fileConn,append=TRUE,sep="\n")
+  
   cat('---',file=fileConn,append=TRUE,sep="\n")
   
-  system(paste("cat","./website/index.qmd"," ./template/home_template.qmd","> ", "./website/index.qmd"))
-  
+  system(paste("cat","./website/index_h.txt"," ./template/home_template.qmd","> ", "./website/index.qmd"))
+  unlink("./website/index_h.txt")
   
   
 ############################################################
 # Setup files and directories to create the maps
 ############################################################  
   
+  LAD_RGN <- LAD_RGN %>% filter(RGN22CD == "E12000007")                   
+  LAD_list <- LAD_RGN$LAD22CD
     
   # Create directory structure
   
@@ -334,6 +320,13 @@ for (ct_tmpID in C_Table_Name_List) {
       
     } 
     
+  
+  # Copy the all data page
+  
+  system("cp template/all_census_data.qmd website/all_census_data.qmd")
+  
+  
+  
   
   # Render Website
   

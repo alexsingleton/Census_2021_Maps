@@ -5,6 +5,7 @@ library(sf,quietly = TRUE)
 library(magrittr,quietly = TRUE)
 library(tmap,quietly = TRUE)
 library(kableExtra,quietly = TRUE)
+library(magick,quietly = TRUE)
 ```
 
 ```{r echo=FALSE, message=FALSE,error=FALSE}
@@ -88,14 +89,33 @@ for (measures in measures_to_map) {
     
     tmap_save(tm, paste0("./maps/",measures,".pdf"), width=1920, asp=0)
     
-    rm(tm,tmp_boundary_lad)
+    rm(tm)
     
 }
 }
 
 ```
 
+
 ## Download Census Data Tables for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD21CD == LAD_CD) %>% select(LAD21NM) %>% pull()`
+
+::: {.column-margin}
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+ggplot() +
+ geom_sf(data = boundary_lad %>% filter(substr(LAD21CD, 1, 1) %in% c("W", "E")), colour = "#dbdbdb", lwd = 0) +
+  geom_sf(data = st_centroid(boundary_lad %>% filter(LAD21CD == LAD_CD)), color = "red", size = 2) +
+
+  theme(panel.background = element_blank(),
+        line = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        plot.margin=unit(c(-0.20,0,0,0), "null")) +
+  coord_sf(datum=NA) 
+  ggsave("lad.png")
+
+
+```
+:::
 
 The 2021 Output Area census data for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD21CD == LAD_CD) %>% select(LAD21NM) %>% pull()` can be downloaded through the links in the following table. Maps have also been created for each variable in the tables, and can be downloaded [here](#census-data-maps). However, if you want to use the census tables to create your own maps of `r boundary_lad %>% st_drop_geometry() %>% filter(LAD21CD == LAD_CD) %>% select(LAD21NM) %>% pull()`, you can download a GeoPackage file [here](`r paste0(LAD_CD,".gpkg")`).
 
@@ -111,6 +131,9 @@ Census_Metadata %>%
   scroll_box(height = "300px",fixed_thead = TRUE)
 
 ```
+
+
+
 
 ## Download Census Data Maps for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD21CD == LAD_CD) %>% select(LAD21NM) %>% pull()`
 
@@ -167,6 +190,7 @@ if (Census_Metadata %>% filter(Table_ID %in% CT) %>% nrow() > 6){
 The following R code can be used to generate a map for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD21CD == LAD_CD) %>% select(LAD21NM) %>% pull()` using the data and boundaries found on this website. You should be able to re-create or adapt the code to make maps like those that you can download, or even make an interactive  version of the maps! In this code we refer to the boundaries and census tables generically; but remember that you can download the boundaries for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD21CD == LAD_CD) %>% select(LAD21NM) %>% pull()` [here](`r paste0(LAD_CD,".gpkg")`); and for the example of mapping the "Economically Inactive", the relevant census table "Economic activity status" can be downloaded [here](`r paste0(LAD_CD,"_ts066.csv")`).
 
 ```{r eval=FALSE}
+
 #Load the required packages
 library(tidyverse)
 library(sf)
@@ -201,10 +225,11 @@ my_map <- OA %>%
             title = "%", # Title of the legend
             legend.reverse = TRUE) + # legend Order
 
-    tm_borders(col = "#D3D3D3", lwd = 0.5, group = NULL) +  # OA border colour and weight
+    tm_borders(col = "#D3D3D3", lwd = 0.5, group = NULL) +  # OA border 
+                                                            #colour and weight
     
     tm_layout(frame = FALSE, # No frame around the map
-              attr.outside = TRUE, # Needed to move the credits and scale bar outside the map 
+              attr.outside = TRUE, # Move the credits and scale outside the map 
               legend.outside = TRUE, # Plot legend outside the map
               legend.outside.position = "right", # Legend position
               main.title = "Economically Inactive",# Map Title
@@ -213,7 +238,9 @@ my_map <- OA %>%
   
     tm_scale_bar(position=c("right", "top")) + # Add a scale bar and position
   
-    tm_credits("Contains OS and National Statistics data © Crown copyright and database right 2022",position = c("right", "top")) # Add the required credits for the data
+    # Add the required credits for the data
+    tm_credits("Contains OS and National Statistics data © Crown copyright
+               and database right 2022",position = c("right", "top")) 
     
 
 # Plots the map
@@ -221,9 +248,16 @@ tmap_save(my_map, filename="map.png")
 
 ```
 
-![Map](map.png)
 
-One of the nice features of tmap is that it is also incredibly easy to make a simple interactive map. 
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+#| fig-cap: "An Example Map Showing the % of People who are Economically Inactive."
+#| cap-location: margin
+
+my_map
+
+```
+
+A nice feature of tmap is that it is also incredibly easy to make a simple interactive map. 
 
 ```{r message=FALSE,warning=FALSE}
 tmap_mode("view") # One line to put tmap in interactive mode
