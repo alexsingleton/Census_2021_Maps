@@ -105,6 +105,7 @@ for (ct_tmpID in C_Table_Name_List) {
   cat('  output-dir: ../docs',file=fileConn,append=TRUE,sep="\n\n")
   cat('website:',file=fileConn,append=TRUE,sep="\n")
   cat('  title: "England and Wales Census Maps 2021"',file=fileConn,append=TRUE,sep="\n")
+  cat('  google-analytics: "UA-6248530-1"',file=fileConn,append=TRUE,sep="\n")
   cat('  navbar:',file=fileConn,append=TRUE,sep="\n")
   cat('      background: light',file=fileConn,append=TRUE,sep="\n")
   cat('      search: true',file=fileConn,append=TRUE,sep="\n")
