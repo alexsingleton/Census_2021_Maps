@@ -2,7 +2,6 @@
 # Setup and download data
 #########################################################
 
-
 library(tidyverse)
 library(sf)
 library(magrittr)
@@ -10,27 +9,33 @@ library(tmap)
 library(arrow)
 
 # Download the Output Areas
+
 url<- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Output_Areas_Dec_2021_Boundaries_Generalised_Clipped_EW_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=OA21CD&outSR=4326&f=json"
 boundary <- st_read(url)
 
 # Download the LAD Boundaries
+
 url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_December_2021_UK_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=LAD21CD,LAD21NM,LAD21NMW&outSR=4326&f=json"
 boundary_lad <- st_read(url)
 st_write(boundary_lad,"boundary_lad.gpkg")
 
 # Download the OA to LAD lookup
+
 OA_LAD <- read_csv("https://www.arcgis.com/sharing/rest/content/items/792f7ab3a99d403ca02cc9ca1cf8af02/data")
 
 # Downlaod LAD to Region - then select out unique records (original is an MSOA table)
+
 LAD_RGN <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/MSOA21_BUA22_LAD22_RGN22_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=LAD22CD,RGN22CD,RGN22NM&returnGeometry=false&outSR=4326&f=json")
 LAD_RGN %<>%
   distinct()
 
 # Remove unwanted columns
+
 OA_LAD %<>%
   select(oa21cd,lad22cd)
 
 #Append LAD / Region to OA Boundaries
+
 boundary %<>%
   left_join(OA_LAD,by = c("OA21CD" = "oa21cd")) 
 boundary %<>%
@@ -55,6 +60,7 @@ write_csv(census_tables,"Census_Metadata.csv")
 
 
 # Read Census Table (Remove ts041 - number of households,ts006 - density)
+
 C_Table_Name_List <- census_tables %>% select(Table_ID) %>% unique() %>% pull()
 C_Table_Name_List %<>% setdiff(c("ts041","ts006"))
 
@@ -65,8 +71,7 @@ for (ct_tmpID in C_Table_Name_List) {
   
   # Calculate Percentages
   CT_tmp %<>%
-   # mutate_at(vars(-1:-2),  PCT = ~(./sym(paste0(ct_tmpID,"0001"))))
-    
+   
   mutate_at(vars(-1:-2), list(PCT = ~(. / !!sym(paste0(ct_tmpID,"0001"))*100)))
  
  assign(ct_tmpID,CT_tmp)
@@ -75,30 +80,23 @@ for (ct_tmpID in C_Table_Name_List) {
 }
 
 
-
-
-
-
-
+########################################################
+# Create Website Skeleton
+#########################################################  
   
-  
-  
-  ####################### Create Website ######################
-  
-  
-  # Setup Blog Skeleton
+  # Setup quarto
+
   system("quarto create-project website --type website:blog")
   
   #remove unwanted files from the template
+
   unlink("website/posts/*", recursive = TRUE,force=TRUE)
   unlink("website/about.qmd")
   unlink("website/profile.jpg")
   unlink("website/_quarto.yml")
   unlink("website/index.qmd")
   unlink("docs",recursive = TRUE,force=TRUE)
-  
-  
-  
+
   # Create Yaml / menu
   
   fileConn <- "./website/_quarto.yml"
@@ -136,8 +134,6 @@ for (ct_tmpID in C_Table_Name_List) {
   cat('    theme: litera',file=fileConn,append=TRUE,sep="\n")
   cat('    css: styles.css',file=fileConn,append=TRUE,sep="\n")
   
-  
-  
   #Create new index.qmd
   
   fileConn <- paste0("./website/index_h.txt")
@@ -169,13 +165,10 @@ for (ct_tmpID in C_Table_Name_List) {
   
   
 ############################################################
-# Setup files and directories to create the maps
+# Setup files and directories to create the data / maps
 ############################################################  
   
-  LAD_RGN <- LAD_RGN %>% filter(RGN22CD == "E12000007")                   
-  LAD_list <- LAD_RGN$LAD22CD
-    
-  # Create directory structure
+  # Create Directory Structure
   
   for (i in 1:nrow(LAD_RGN)) {
     
@@ -184,8 +177,9 @@ for (ct_tmpID in C_Table_Name_List) {
     
   }
   
+  ###############################
   
-  #- Create OA files for each LAD
+  # Create OA Files for each LAD
   
   for (lad in LAD_list) {
 
@@ -204,20 +198,20 @@ for (ct_tmpID in C_Table_Name_List) {
     
   }
   
-
+  ###############################  
   
-  #- Create Census tables for each LAD
+  # Create Census LAD CSV for each Census Table
   
-  for (CT in C_Table_Name_List) { # loop through census tables
+  for (CT in C_Table_Name_List) { # loop through Census Tables
     
-    tmp_CTAB <- get(CT) # Get the census table
+    tmp_CTAB <- get(CT) # Get the Census Table
     tmp_CTAB %<>%
       left_join(OA_LAD,by = c("OA" = "oa21cd")) # Append the LAD codes
     tmp_CTAB %<>%
       left_join(LAD_RGN,by = c("lad22cd" = "LAD22CD"))  # Append the Region codes
     
   
-    # This check is needed to account for tables that are only produced for wales
+    # This Check is Needed to Account for Tables that are only Produced for Wales
     
     wales_only_tables <- c("ts032","ts033","ts034","ts035","ts036")
     
@@ -234,14 +228,14 @@ for (ct_tmpID in C_Table_Name_List) {
     
         for (lad in LAD_list_Wales_check) { # loop through each LAD
           
-          # Cut the census table down for the LAD
+          # Cut the Census Table down for the LAD
           tmp_CTAB_LAD <- tmp_CTAB %>%
                 filter(lad22cd == lad) 
           
-          # Get the region
+          # Get the Region
           rgn <- tmp_CTAB_LAD %>% st_drop_geometry() %>% select(RGN22CD) %>% distinct() %>% pull()
           
-          # Remove the lookups
+          # Remove the Lookups
           tmp_CTAB_LAD %<>%
             select(-lad22cd,-RGN22CD,-RGN22NM)
           
@@ -255,14 +249,9 @@ for (ct_tmpID in C_Table_Name_List) {
     rm(tmp_CTAB)
   }
   
+  ###############################
   
-  
-  
-  
-  
-  
-  # Setup the listing page for each Region
-  
+  # Setup a Listing page for each Region
   
   RG <- LAD_RGN %>% select(RGN22CD) %>% pull() %>% unique()
   RG_N <- LAD_RGN %>% select(RGN22NM) %>% pull() %>% unique()
@@ -284,10 +273,9 @@ for (ct_tmpID in C_Table_Name_List) {
     cat('---',file=fileConn,append=TRUE,sep="\n")
   }
   
+  ###############################
   
-  
- # Generate the QML to build the maps
-    
+ # Generate the QML to Build the Maps for each LAD
     
     for (i in 1:nrow(LAD_RGN)) {
       
@@ -301,7 +289,7 @@ for (ct_tmpID in C_Table_Name_List) {
       unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd"))
       
       
-      # Create tmp YAML
+      # Create a tmp YAML
       
       fileConn <- paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd")
       cat('---',file=fileConn,append=TRUE,sep="\n")
@@ -313,22 +301,26 @@ for (ct_tmpID in C_Table_Name_List) {
       rm(lad_name)
       
       
-      # Append YAML to template in the blog folder
+      # Append YAML to the Template in the Blog Folder
+      
       system(paste("cat",fileConn," ./template/index.qmd","> ", paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/index.qmd")))
       unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd"))
       
       
     } 
-    
+
+  ###############################    
   
-  # Copy the all data page
+  # Copy the All Data Page from the Template Folder
   
   system("cp template/all_census_data.qmd website/all_census_data.qmd")
   
   
   
   
-  # Render Website
+  ############################################################
+  # Make the Website!!!
+  ############################################################ 
   
   system("quarto render website")
   
