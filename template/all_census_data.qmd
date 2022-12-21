@@ -19,7 +19,7 @@ census_tables <- read_csv("https://github.com/alexsingleton/Census_2021_Output_A
 census_tables %>%
   select(Table_Name,Table_ID) %>%
   unique() %>%
-  mutate(CSV = cell_spec("CSV", "html", link = paste0("vhttps://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/",Table_ID,".csv","?raw=true"))) %>%
+  mutate(CSV = cell_spec("CSV", "html", link = paste0("https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/",Table_ID,".csv","?raw=true"))) %>%
   mutate(Parquet = cell_spec("Parquet", "html", link = paste0("https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/",Table_ID,".parquet","?raw=true"))) %>%
   kable(col.names=c("Census Table","Table ID","Download","Download"),escape=FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),full_width = T)

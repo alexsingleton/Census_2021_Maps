@@ -322,8 +322,9 @@ for (ct_tmpID in C_Table_Name_List) {
   ############################################################
   # Make the Website!!!
   ############################################################ 
-  
+  start_time <- Sys.time()
   system("quarto render website")
-  
+  end_time <- Sys.time()
+  end_time - start_time
     
     

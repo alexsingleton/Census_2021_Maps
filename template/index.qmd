@@ -125,7 +125,7 @@ Census_Metadata %>%
   filter(Table_ID %in% census_table_list) %>%
   select(Table_Name,Table_ID) %>%
   unique() %>%
-  mutate(Download = cell_spec("Download", "html", link = paste0(Table_ID,".csv"))) %>%
+  mutate(Download = cell_spec("Download", "html", link = paste0(LAD_CD,"_",Table_ID,".csv"))) %>%
   kable(col.names=c("Census Table","Table ID","Download CSV"),escape=FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),full_width = T) %>%
   scroll_box(height = "300px",fixed_thead = TRUE)
@@ -225,7 +225,7 @@ my_map <- OA %>%
             title = "%", # Title of the legend
             legend.reverse = TRUE) + # legend Order
 
-    tm_borders(col = "#D3D3D3", lwd = 0.5, group = NULL) +  # OA border 
+    tm_borders(col = "#D3D3D3", lwd = 0.3, group = NULL) +  # OA border 
                                                             #colour and weight
     
     tm_layout(frame = FALSE, # No frame around the map
