@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>England and Wales Census Maps 2021 – all_census_data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-6248530-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">England and Wales Census Maps 2021</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000001.html">NE</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000002.html">NW</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000003.html">Yorkshire and The Humber</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000004.html">EM</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000005.html">WM</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000006.html">EE</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000007.html">London</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000008.html">SE</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/E12000009.html">SW</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./posts/W92000004.html">Wales</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+
+
+<p>The following table provides links to all Output Area level 2021 Census data for England and Wales. More information about how these data were created can be found <a href="https://www.alex-singleton.com/content/blog/2022-12-04-Census-2021/">here</a>, including a metadata table for the column names. If you want data and maps for a specific local authority, click on a region above.</p>
+<div class="cell">
+<div class="cell-output-display">
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Census Table </th>
+   <th style="text-align:left;"> Table ID </th>
+   <th style="text-align:left;"> Download </th>
+   <th style="text-align:left;"> Download </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Residence type </td>
+   <td style="text-align:left;"> ts001 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts001.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts001.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Marital and civil partnership status </td>
+   <td style="text-align:left;"> ts002 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts002.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts002.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Household composition </td>
+   <td style="text-align:left;"> ts003 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts003.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts003.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Country of birth </td>
+   <td style="text-align:left;"> ts004 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts004.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts004.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Passports held </td>
+   <td style="text-align:left;"> ts005 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts005.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts005.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Population Density </td>
+   <td style="text-align:left;"> ts006 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts006.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts006.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Sex </td>
+   <td style="text-align:left;"> ts008 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts008.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts008.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Household deprivation </td>
+   <td style="text-align:left;"> ts011 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts011.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts011.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Year of arrival in the UK </td>
+   <td style="text-align:left;"> ts015 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts015.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts015.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Length of residence in the UK </td>
+   <td style="text-align:left;"> ts016 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts016.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts016.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Household size </td>
+   <td style="text-align:left;"> ts017 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts017.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts017.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Age of arrival in the UK </td>
+   <td style="text-align:left;"> ts018 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts018.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts018.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Migrant indicator </td>
+   <td style="text-align:left;"> ts019 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts019.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts019.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Sex </td>
+   <td style="text-align:left;"> ts020 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts020.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts020.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Number of households </td>
+   <td style="text-align:left;"> ts041 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts041.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts041.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Ethnic group </td>
+   <td style="text-align:left;"> ts021 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts021.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts021.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Multiple ethnic groups in household </td>
+   <td style="text-align:left;"> ts023 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts023.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts023.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Household language (English and Welsh) </td>
+   <td style="text-align:left;"> ts025 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts025.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts025.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Multiple main languages in household </td>
+   <td style="text-align:left;"> ts026 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts026.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts026.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> National identity </td>
+   <td style="text-align:left;"> ts027 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts027.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts027.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Proficiency in English language </td>
+   <td style="text-align:left;"> ts029 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts029.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts029.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Religion </td>
+   <td style="text-align:left;"> ts030 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts030.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts030.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Multi religion household </td>
+   <td style="text-align:left;"> ts075 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts075.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts075.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Welsh language skills </td>
+   <td style="text-align:left;"> ts032 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts032.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts032.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Welsh speaking ability </td>
+   <td style="text-align:left;"> ts033 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts033.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts033.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Welsh writing ability </td>
+   <td style="text-align:left;"> ts034 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts034.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts034.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Welsh reading ability </td>
+   <td style="text-align:left;"> ts035 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts035.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts035.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Welsh understanding ability </td>
+   <td style="text-align:left;"> ts036 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts036.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts036.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Distance travelled to work </td>
+   <td style="text-align:left;"> ts058 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts058.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts058.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Hours worked </td>
+   <td style="text-align:left;"> ts059 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts059.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts059.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Method of travel to workplace </td>
+   <td style="text-align:left;"> ts061 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts061.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts061.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> National Statistics Socio-economic Classification (NS-SEC) </td>
+   <td style="text-align:left;"> ts062 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts062.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts062.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Occupation (current) </td>
+   <td style="text-align:left;"> ts063 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts063.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts063.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Unemployment history </td>
+   <td style="text-align:left;"> ts065 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts065.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts065.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Economic activity status </td>
+   <td style="text-align:left;"> ts066 </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/csv/ts066.csv?raw=true" style="     ">CSV</a> </td>
+   <td style="text-align:left;"> <a href="https://github.com/alexsingleton/Census_2021_Output_Areas/blob/main/output_data/parquet/ts066.parquet?raw=true" style="     ">Parquet</a> </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
