@@ -42,5 +42,3 @@ vignettes/*.pdf
 .quarto
 
 
-#Website directory - as generated from the code
-website
