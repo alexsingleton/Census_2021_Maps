@@ -276,7 +276,7 @@ for (ct_tmpID in C_Table_Name_List) {
   
   ###############################
   
- # Generate the QML to Build the Maps for each LAD
+ # Generate the QMD to Build the Maps for each LAD
     
     for (i in 1:nrow(LAD_RGN)) {
       
