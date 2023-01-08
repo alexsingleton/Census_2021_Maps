@@ -1,0 +1,11 @@
+---
+title: "London"
+listing:
+  contents: E12000007
+  type: grid
+  fields: [image,title]
+  sort-ui: false
+  filter-ui: [title]
+page-layout: full
+title-block-banner: false
+---

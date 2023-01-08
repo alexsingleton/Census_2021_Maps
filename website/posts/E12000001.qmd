@@ -1,0 +1,11 @@
+---
+title: "North East"
+listing:
+  contents: E12000001
+  type: grid
+  fields: [image,title]
+  sort-ui: false
+  filter-ui: [title]
+page-layout: full
+title-block-banner: false
+---

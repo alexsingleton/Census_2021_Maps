@@ -1,0 +1,11 @@
+---
+title: "West Midlands"
+listing:
+  contents: E12000005
+  type: grid
+  fields: [image,title]
+  sort-ui: false
+  filter-ui: [title]
+page-layout: full
+title-block-banner: false
+---
