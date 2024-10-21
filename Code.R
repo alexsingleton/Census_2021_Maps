@@ -7,44 +7,49 @@ library(sf)
 library(magrittr)
 library(tmap)
 library(arrow)
+library(magick)
+library(kableExtra)
+library(jsonlite)
 
 # Download the Output Areas
 
-url<- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Output_Areas_Dec_2021_Boundaries_Generalised_Clipped_EW_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=OA21CD&outSR=4326&f=json"
+url<- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Output_Areas_2021_EW_BGC_V2/FeatureServer/0/query?where=1%3D1&outFields=OA21CD&outSR=4326&f=json"
 boundary <- st_read(url)
 
 # Download the LAD Boundaries
 
-url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_December_2021_UK_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=LAD21CD,LAD21NM,LAD21NMW&outSR=4326&f=json"
+url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Local_Authority_Districts_December_2023_Boundaries_UK_BGC/FeatureServer/0/query?where=1%3D1&outFields=LAD23CD,LAD23NM,LAD23NMW&outSR=4326&f=json"
 boundary_lad <- st_read(url)
 st_write(boundary_lad,"boundary_lad.gpkg")
 
 # Download the OA to LAD lookup
+url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/OA21_LAD23_LSOA21_MSOA21_LEP23_EN_LU/FeatureServer/0/query?where=1%3D1&outFields=OA21CD    ,LAD23CD&outSR=4326&f=json"
+OA_LAD <- st_read(url) %>% as_tibble()
 
-OA_LAD <- read_csv("https://www.arcgis.com/sharing/rest/content/items/792f7ab3a99d403ca02cc9ca1cf8af02/data")
 
-# Downlaod LAD to Region - then select out unique records (original is an MSOA table)
 
-LAD_RGN <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/MSOA21_BUA22_LAD22_RGN22_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=LAD22CD,RGN22CD,RGN22NM&returnGeometry=false&outSR=4326&f=json")
+
+# Downlaod LAD to Region - then select out unique records (original is an Ward table)
+
+LAD_RGN <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/WD23_LAD23_CTY23_OTH_UK_LU/FeatureServer/0/query?where=1%3D1&outFields=LAD23CD,RGN23CD,RGN23NM&outSR=4326&f=json")
 LAD_RGN %<>%
+  filter(RGN23CD != "N92000002") %>%
+  filter(RGN23CD != "S92000003") %>%
   distinct()
 
-# Remove unwanted columns
-
-OA_LAD %<>%
-  select(oa21cd,lad22cd)
 
 #Append LAD / Region to OA Boundaries
 
 boundary %<>%
-  left_join(OA_LAD,by = c("OA21CD" = "oa21cd")) 
+  left_join(OA_LAD,by = "OA21CD") 
 boundary %<>%
-  left_join(LAD_RGN,by = c("lad22cd" = "LAD22CD")) 
+  left_join(LAD_RGN,by = "LAD23CD") 
 
 # Get a list of LAD
 
 LAD_list <- boundary %>% 
-  select(lad22cd) %>%
+  select(LAD23CD) %>%
+  filter(!is.na(LAD23CD)) %>%
   st_drop_geometry() %>%
   pull() %>%
   unique()
@@ -173,8 +178,8 @@ for (ct_tmpID in C_Table_Name_List) {
   
   for (i in 1:nrow(LAD_RGN)) {
     
-    dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/"),recursive=TRUE)
-    dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/maps/"),recursive=TRUE)
+    dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/"),recursive=TRUE)
+    dir.create(paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/maps/"),recursive=TRUE)
     
   }
   
@@ -186,9 +191,9 @@ for (ct_tmpID in C_Table_Name_List) {
 
     
     tmp <- boundary %>%
-      filter(lad22cd == lad)
+      filter(LAD23CD == lad)
     
-    rgn <- tmp %>% st_drop_geometry() %>% select(RGN22CD) %>% distinct() %>% pull()
+    rgn <- tmp %>% st_drop_geometry() %>% select(RGN23CD) %>% distinct() %>% pull()
     
     tmp %<>%
       select(OA21CD)
@@ -207,9 +212,9 @@ for (ct_tmpID in C_Table_Name_List) {
     
     tmp_CTAB <- get(CT) # Get the Census Table
     tmp_CTAB %<>%
-      left_join(OA_LAD,by = c("OA" = "oa21cd")) # Append the LAD codes
+      left_join(OA_LAD,by = c("OA" = "OA21CD")) # Append the LAD codes
     tmp_CTAB %<>%
-      left_join(LAD_RGN,by = c("lad22cd" = "LAD22CD"))  # Append the Region codes
+      left_join(LAD_RGN,by = c("LAD23CD" = "LAD23CD"))  # Append the Region codes
     
   
     # This Check is Needed to Account for Tables that are only Produced for Wales
@@ -231,14 +236,14 @@ for (ct_tmpID in C_Table_Name_List) {
           
           # Cut the Census Table down for the LAD
           tmp_CTAB_LAD <- tmp_CTAB %>%
-                filter(lad22cd == lad) 
+                filter(LAD23CD == lad) 
           
           # Get the Region
-          rgn <- tmp_CTAB_LAD %>% st_drop_geometry() %>% select(RGN22CD) %>% distinct() %>% pull()
+          rgn <- tmp_CTAB_LAD %>% st_drop_geometry() %>% select(RGN23CD) %>% distinct() %>% pull()
           
           # Remove the Lookups
           tmp_CTAB_LAD %<>%
-            select(-lad22cd,-RGN22CD,-RGN22NM)
+            select(-LAD23CD,-RGN23CD)
           
           # Write CSV
           write_csv(tmp_CTAB_LAD, paste0("./website/posts/",rgn,"/",lad,"/",lad,"_",CT,".csv")) 
@@ -254,8 +259,8 @@ for (ct_tmpID in C_Table_Name_List) {
   
   # Setup a Listing page for each Region
   
-  RG <- LAD_RGN %>% select(RGN22CD) %>% pull() %>% unique()
-  RG_N <- LAD_RGN %>% select(RGN22NM) %>% pull() %>% unique()
+  RG <- LAD_RGN %>% select(RGN23CD) %>% pull() %>% unique()
+  RG_N <- LAD_RGN %>% select(RGN23NM) %>% pull() %>% unique()
   
   
   for (i in 1:length(RG)) {
@@ -282,20 +287,20 @@ for (ct_tmpID in C_Table_Name_List) {
       
       lad_name <- boundary_lad %>% 
         st_drop_geometry() %>% 
-        filter(LAD21CD == LAD_RGN[i,"LAD22CD"]) %>%
-        select(LAD21NM) %>%
+        filter(LAD23CD == LAD_RGN[i,"LAD23CD"]) %>%
+        select(LAD23NM) %>%
         pull()
       
-      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/index.qmd"))
-      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd"))
+      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/index.qmd"))
+      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/tmp_head.qmd"))
       
       
       # Create a tmp YAML
       
-      fileConn <- paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd")
+      fileConn <- paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/tmp_head.qmd")
       cat('---',file=fileConn,append=TRUE,sep="\n")
       cat(paste0('title: "',lad_name,'"'),file=fileConn,append=TRUE,sep="\n")
-      cat(paste0("categories: [",LAD_RGN[i,"LAD22CD"],"]"),file=fileConn,append=TRUE,sep="\n")
+      cat(paste0("categories: [",LAD_RGN[i,"LAD23CD"],"]"),file=fileConn,append=TRUE,sep="\n")
       cat('image: "map.png"',file=fileConn,append=TRUE,sep="\n")
       cat('---',file=fileConn,append=TRUE,sep="\n")
       
@@ -304,8 +309,8 @@ for (ct_tmpID in C_Table_Name_List) {
       
       # Append YAML to the Template in the Blog Folder
       
-      system(paste("cat",fileConn," ./template/index.qmd","> ", paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/index.qmd")))
-      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN22CD"],"/",LAD_RGN[i,"LAD22CD"],"/tmp_head.qmd"))
+      system(paste("cat",fileConn," ./template/index.qmd","> ", paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/index.qmd")))
+      unlink(paste0("./website/posts/",LAD_RGN[i,"RGN23CD"],"/",LAD_RGN[i,"LAD23CD"],"/tmp_head.qmd"))
       
       
     } 
