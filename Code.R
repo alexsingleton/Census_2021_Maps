@@ -23,13 +23,13 @@ boundary_lad <- st_read(url)
 st_write(boundary_lad,"boundary_lad.gpkg")
 
 # Download the OA to LAD lookup
-url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/OA21_LAD23_LSOA21_MSOA21_LEP23_EN_LU/FeatureServer/0/query?where=1%3D1&outFields=OA21CD    ,LAD23CD&outSR=4326&f=json"
+url <- "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/OA21_LAD23_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=OA21CD,LAD23CD&returnGeometry=false&outSR=4326&f=json"
 OA_LAD <- st_read(url) %>% as_tibble()
 
 
 
 
-# Downlaod LAD to Region - then select out unique records (original is an Ward table)
+# Download LAD to Region - then select out unique records (original is an Ward table)
 
 LAD_RGN <- st_read("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/WD23_LAD23_CTY23_OTH_UK_LU/FeatureServer/0/query?where=1%3D1&outFields=LAD23CD,RGN23CD,RGN23NM&outSR=4326&f=json")
 LAD_RGN %<>%
