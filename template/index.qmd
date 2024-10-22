@@ -97,7 +97,7 @@ for (measures in measures_to_map) {
 ```
 
 
-## Download Census Data Tables for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()`
+## Download Census Data Tables for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()`
 
 ::: {.column-margin}
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
@@ -117,7 +117,7 @@ ggplot() +
 ```
 :::
 
-The 2021 Output Area census data for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()` can be downloaded through the links in the following table. Maps have also been created for each variable in the tables, and can be downloaded [here](#census-data-maps). However, if you want to use the census tables to create your own maps of `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()`, you can download a GeoPackage file [here](`r paste0(LAD_CD,".gpkg")`).
+The 2021 Output Area census data for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()` can be downloaded through the links in the following table. Maps have also been created for each variable in the tables, and can be downloaded [here](#census-data-maps). However, if you want to use the census tables to create your own maps of `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()`, you can download a GeoPackage file [here](`r paste0(LAD_CD,".gpkg")`).
 
 ```{r echo=FALSE, message=FALSE,error=FALSE}
 
@@ -135,9 +135,9 @@ Census_Metadata %>%
 
 
 
-## Download Census Data Maps for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()`
+## Download Census Data Maps for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()`
 
-For each census table, basic choropleth maps have been created for the Output Areas within  `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()`. These are all generated as PDF files and can be downloaded from the links below. If you are interested in the R code that was used to create the maps, there is a reproducible example [here](#make-a-map-in-r).
+For each census table, basic choropleth maps have been created for the Output Areas within  `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()`. These are all generated as PDF files and can be downloaded from the links below. If you are interested in the R code that was used to create the maps, there is a reproducible example [here](#make-a-map-in-r).
 
 ```{r echo=FALSE,message=FALSE,error=FALSE,results='asis'}
 
@@ -185,9 +185,9 @@ if (Census_Metadata %>% filter(Table_ID %in% CT) %>% nrow() > 6){
 ```
 
 
-## Make a Map of `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()` in R
+## Make a Map of `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()` in R
 
-The following R code can be used to generate a map for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()` using the data and boundaries found on this website. You should be able to re-create or adapt the code to make maps like those that you can download, or even make an interactive  version of the maps! In this code we refer to the boundaries and census tables generically; but remember that you can download the boundaries for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD21NM) %>% pull()` [here](`r paste0(LAD_CD,".gpkg")`); and for the example of mapping the "Economically Inactive", the relevant census table "Economic activity status" can be downloaded [here](`r paste0(LAD_CD,"_ts066.csv")`).
+The following R code can be used to generate a map for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()` using the data and boundaries found on this website. You should be able to re-create or adapt the code to make maps like those that you can download, or even make an interactive  version of the maps! In this code we refer to the boundaries and census tables generically; but remember that you can download the boundaries for `r boundary_lad %>% st_drop_geometry() %>% filter(LAD23CD == LAD_CD) %>% select(LAD23NM) %>% pull()` [here](`r paste0(LAD_CD,".gpkg")`); and for the example of mapping the "Economically Inactive", the relevant census table "Economic activity status" can be downloaded [here](`r paste0(LAD_CD,"_ts066.csv")`).
 
 ```{r eval=FALSE}
 
